@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {
+        if (document.scripts[j].src === r) { return; }
+      }
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(101035876, "init", {
+         clickmap:true,
+         trackLinks:true,
+         accurateTrackBounce:true,
+         webvisor:true
+    });
+  </script>
+  <noscript>
+    <div>
+      <img src="https://mc.yandex.ru/watch/101035876" style="position:absolute; left:-9999px;" alt="" />
+    </div>
+  </noscript>
+  <!-- /Yandex.Metrika counter -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Click Test</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    #start-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #start-modal input {
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #start-modal button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #instruction {
+      font-size: 20px;
+      margin: 20px;
+      max-width: 100%;
+      word-break: break-word;
+    }
+    #image-container {
+      position: relative;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+    #test-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: crosshair;
+    }
+    .click-marker {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background-color: red;
+      border-radius: 50%;
+      border: 2px solid white;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    #submit-button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 16px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Модальное окно для ввода ID и начала теста -->
+  <div id="start-modal">
+    <div>
+    В приложении Альфа-Банка для Бизнеса действует <u><strong>программа лояльности</strong></u> — система вознаграждений, где вы зарабатываете баллы за выполнение различных заданий и действий.<br> 
+    Чем больше баллов вы набираете, тем выше ваш уровень, что позволит получать дополнительные выгоды.<br>
+    <br>
+    Сейчас <u><strong>вы хотите узнать</strong></u>, какие задания нужно выполнить, чтобы заработать больше баллов и повысить уровень в программе.<br>
+
+    <u><strong>Ваша задача</strong></u> — выбрать и нажать на тот элемент страницы, который, по вашему мнению, ведёт к нужной информации.<br>
+    <u><strong>Нажмите только один раз:</strong></u> система фиксирует лишь первое нажатие на экране.<br>
+    <br>
+    После выбора нажмите кнопку <u><strong>«Отправить»</strong></u> внизу страницы.<br>
+    <br>
+    Тест начнётся, когда вы нажмёте кнопку «Начать тест».<br>
+    Перед началом введите свой ID, выданный сотрудником компании.<br>
+    </div>
+    <input type="text" id="user-id" placeholder="Введите ваш ID">
+    <button id="start-button">Начать тест</button>
+  </div>
+
+  <!-- Инструкционный текст -->
+  <div id="instruction">
+    Куда именно вы нажмёте в первую очередь, чтобы перейти к списку заданий и понять, как вам повысить уровень и получить больше баллов?
+  </div>
+
+  <!-- Контейнер для изображения -->
+  <div id="image-container">
+    <img id="test-image" src="maket1.png" alt="Макет интерфейса">
+  </div>
+
+  <!-- Кнопка отправки -->
+  <button id="submit-button" disabled>Отправить</button>
+
+  <script>
+    // Глобальные переменные
+    let clickData = null;
+    let startTime = null;
+    let elapsedTime = null;
+    let userId = null;
+
+    const startModal = document.getElementById('start-modal');
+    const startButton = document.getElementById('start-button');
+    const userIdInput = document.getElementById('user-id');
+    const image = document.getElementById('test-image');
+    const container = document.getElementById('image-container');
+    const submitButton = document.getElementById('submit-button');
+
+    // Запуск теста: сохраняем ID и запускаем секундомер
+    startButton.addEventListener('click', function() {
+      const enteredId = userIdInput.value.trim();
+      if (!enteredId) {
+        alert("Пожалуйста, введите ваш ID!");
+        return;
+      }
+      userId = enteredId;
+      startTime = Date.now();
+      startModal.style.display = 'none';
+      console.log("Тест начат. ID пользователя:", userId);
+    });
+
+    // Обработка клика по изображению
+    image.addEventListener('click', function(e) {
+      if (clickData || !startTime) return;
+      
+      // Получаем размеры и положение изображения
+      const rect = image.getBoundingClientRect();
+      // Абсолютные координаты клика относительно изображения
+      const absoluteX = e.clientX - rect.left;
+      const absoluteY = e.clientY - rect.top;
+      
+      // Переводим координаты в относительный формат (0 - 1)
+      const relativeX = absoluteX / rect.width;
+      const relativeY = absoluteY / rect.height;
+      
+      // Сохраняем относительные координаты (округляем до 4 знаков)
+      clickData = { x: relativeX.toFixed(4), y: relativeY.toFixed(4) };
+      elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log("Относительные координаты первого клика:", clickData, "Время выполнения:", elapsedTime);
+      
+      // Для визуального отображения используем абсолютные координаты
+      const marker = document.createElement('div');
+      marker.className = 'click-marker';
+      marker.style.left = `${absoluteX}px`;
+      marker.style.top = `${absoluteY}px`;
+      container.appendChild(marker);
+      
+      submitButton.disabled = false;
+    });
+
+    // Отправка данных на сервер (Google Таблицу)
+    submitButton.addEventListener('click', function() {
+      if (!clickData || !userId || elapsedTime === null) return;
+      
+      // Формируем URL‑encoded данные. Здесь x и y – относительные координаты.
+      const formData = new URLSearchParams();
+      formData.append("uid", userId);
+      formData.append("x", clickData.x);
+      formData.append("y", clickData.y);
+      formData.append("elapsedTime", elapsedTime);
+
+      fetch("https://script.google.com/macros/s/AKfycbyD53e_bsZ-IJa9KA7yFKckxvnjDv4vRkxXC5lfyBKhD89BlCDz5htBOAcVZUpbshH63w/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData.toString()
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log("Ответ сервера:", data);
+        alert("Данные успешно отправлены в таблицу!");
+      })
+      .catch(error => {
+        console.error("Ошибка отправки:", error);
+        alert("Данные отправлены в таблицу!");
+      });
+
+      console.log("Отправка данных:", { uid: userId, x: clickData.x, y: clickData.y, elapsedTime: elapsedTime });
+      submitButton.disabled = true;
+      clickData = null;
+    });
+  </script>
+</body>
+</html>
